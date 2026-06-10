@@ -1,0 +1,6 @@
+{
+  "name": "抖音 DRI AI能力模型指南针",
+  "description": "帮助抖音各序列同学（研发/产品/运营/设计）在5分钟内对齐AI时代DRI能力，评估自身AI水位，并自动生成个性化成长与学习路径规划的指南针系统。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
