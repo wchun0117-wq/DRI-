@@ -16,7 +16,7 @@ export const GLOSSARY_DATA: GlossaryItem[] = [
     term: "DRI",
     englishTerm: "Directly Responsible Individual",
     definition: "直接负责人。在AI时代，DRI不是一个‘会用AI的产品经理’，而是一个能独自拉通整个价值链路、定义问题、搭建Agent，并交付用户价值闭环的超级个体。",
-    douyinContext: "在抖音，一个合格的 DRI 能够独立推动业务指标增长。他们不仅是工具的使用者，更是端到端系统和价值闭环的搭建者。"
+    douyinContext: "在抖音，一个合格 of DRI 能够独立推动业务指标增长。他们不仅是工具的使用者，更是端到端系统和价值闭环的搭建者。"
   },
   {
     id: "agent",
@@ -24,6 +24,97 @@ export const GLOSSARY_DATA: GlossaryItem[] = [
     englishTerm: "智能体",
     definition: "能自主多步完成一段完整子任务，调用各种工具并可被编排闭环的AI实体。",
     douyinContext: "例如：在活动运营中，自动提炼热点、匹配脚本模版并调用接口生成视频、发布上线的完整链条都可以用 Agent 承接，人类负责审核和策略定义。"
+  },
+  {
+    id: "llm",
+    term: "Large Language Model",
+    englishTerm: "大语言模型 / LLM",
+    definition: "基于超大规模参数量和海量语料预训练出的深度学习语言模型。通过预测下一个 Token 的概率分布，展现出强大的常识推理、代码编写、多轮对话和上下文学习能力。",
+    douyinContext: "抖音内部广泛应用的豆包大模型、火山引擎大模型，支持着搜索、内容审阅、电商推荐以及 Coze 智能体的底层调用。"
+  },
+  {
+    id: "reinforcement_learning",
+    term: "Reinforcement Learning",
+    englishTerm: "强化学习 / RL",
+    definition: "机器学习的一个重要分支。Agent（智能体）通过与环境的连续交互、采取动作、并基于环境反馈的‘奖励（Reward）’或‘惩罚’信号来不断优化行动策略的试错学习方法。",
+    douyinContext: "广泛运用于抖音短视频推荐系统的排序算法中：根据用户点赞、完播、评论等反馈动作（正向奖励），自动强化模型对高契合度视频的推流倾向。"
+  },
+  {
+    id: "rlhf",
+    term: "RLHF",
+    englishTerm: "人类反馈强化学习",
+    definition: "在大模型对齐阶段，利用人类对生成回答的偏好进行打分建立奖励模型，再使用强化学习算法（如PPO、DPO）引导模型输出更安全、更有用、符合人类核心价值观与指令偏好的技术路径。",
+    douyinContext: "抖音 AIGC 文本生成与电商客服大模型对齐时，人工标注专家通过打分规范了大模型输出的态度，杜绝低俗宣发风险。"
+  },
+  {
+    id: "deep_learning",
+    term: "Deep Learning",
+    englishTerm: "深度学习 / DL",
+    definition: "机器学习的子领域，核心是基于多层人工神经网络的表示学习模型。通过多层网络结构对高维原始输入（如图像像素、音频波形、文本序列）进行层层特征提取和非线性抽象转换。",
+    douyinContext: "视觉多模态算法的基础骨架。抖音特技特效、人脸检测、实时美颜以及自动生成中文字幕，底层无一例外是由深度学习网络提供支持。"
+  },
+  {
+    id: "machine_learning",
+    term: "Machine Learning",
+    englishTerm: "机器学习 / ML",
+    definition: "使计算机无须显式编程即可通过数据训练获得学习和预测能力的学科核心。通常分为监督学习、无监督学习、半监督学习以及强化学习。",
+    douyinContext: "抖音推荐算法和千人千面分发技术的最底层理论基础。系统分析成百上千维的用户特征和视频标签，自动学习最合适的信息推荐概率模型。"
+  },
+  {
+    id: "transformer",
+    term: "Transformer",
+    englishTerm: "自注意力转导模型",
+    definition: "由 Google 团队在 2017 年提出的一种以自注意力（Self-Attention）机制为核心的全新深度神经网络架构。能够高效处理变长序列并具备高度并行计算优势，彻底取代了 RNN/LSTM，成为大模型时代的原子底座。",
+    douyinContext: "抖音各种图文大模型、豆包智能体大脑以及长视频分析能力，归功于 Transformer 神经网络对复杂上下文关联的超强长程捕获力。"
+  },
+  {
+    id: "rag",
+    term: "Retrieval-Augmented Generation",
+    englishTerm: "检索增强生成 / RAG",
+    definition: "大模型应用架构中，通过结合检索系统外挂第三方权威数据库，来增强和纠错 LLM 输出内容的机制。极大缓解了大模型的“时间截止幻觉”和“特定垂域幻觉”问题。",
+    douyinContext: "解决 AI 回复不准的杀手锏。例如基于《抖音安全合规指南》文件库建立向量检索，Agent 在回答用户提问前先检索出相关红线条款并让模型参考，实现高确定性的无幻觉回答。"
+  },
+  {
+    id: "fine_tuning",
+    term: "Fine-Tuning",
+    englishTerm: "监督微调 / SFT",
+    definition: "在已经接受过大规模预训练的通用基座大模型（Base Model）基础上，通过专门的高质量标注数据集（指令-回答对）对模型进行进一步的监督训练，使其行为对齐、掌握特定垂类领域知识或生成特定输出格式的过程。",
+    douyinContext: "抖音基础大模型工程组将大模型灌入‘抖音电商特定术语表与常见客服语境数据包’进行微调，产出了专门胜任抖音售前售后的高性能大模型。"
+  },
+  {
+    id: "lora",
+    term: "LoRA",
+    englishTerm: "低秩自适应微调",
+    definition: "参数高效微调（PEFT）的一种经典杰出方案。不修改大模型原本庞大的权重矩阵，而是通过构造极小规模的外挂低秩矩阵注入修改，从而以极低算力和显存成本把基座模型调教得具备特定的文风或画风。",
+    douyinContext: "抖音设计师开发特效或者 IP 批量物料时，仅需将十几张 IP 角色图片输入并训练出一个 50MB 的 LoRA 插件，即可由大模型一键生成统一品牌视觉。"
+  },
+  {
+    id: "multimodal",
+    term: "Multimodal AI",
+    englishTerm: "多模态人工智能",
+    definition: "具有能够同时处理、理解和生成多种不同模态信息（如文本、代码、图像、音频、视频等）能力的统一模型体系。",
+    douyinContext: "抖音多模态图文转视频应用核心：输入一整段爆款文案，AI 自动理解语义后抓取、渲染出对应场景的原生视频与极具带入感的 AI 语音旁白。"
+  },
+  {
+    id: "pre_training",
+    term: "Pre-training",
+    englishTerm: "预训练",
+    definition: "大模型生命周期的第一阶段，在大规模无监督/半监督文本语料（如数万亿 Token 的网页、书籍、代码）上，利用自监督学习目标（如完形填空或预测下一个词）让模型获得通用语言规律、逻辑与知识表征的过程。",
+    douyinContext: "火山引擎火山大模型在上万亿字节级优质通用多语种互联网数据上完成基座预训练，从而具备了极高的世界常识底座。"
+  },
+  {
+    id: "overfitting",
+    term: "Overfitting",
+    englishTerm: "过拟合 (与之相反为 欠拟合)",
+    definition: "模型参数在训练集上过度拟合，记住了大量特定噪声和细节，导致在新数据和从未见过的测试集上面表现极差、泛化能力极低的现象。",
+    douyinContext: "如果我们把模型调优局限在针对一小撮特定爆款文案上强记硬背，最终模型会过拟合，失去发散变通能力，生成其他情境文案时会极度死板或词不达意。"
+  },
+  {
+    id: "rlaif",
+    term: "RLAIF",
+    englishTerm: "基于AI反馈的强化学习",
+    definition: "由于人类评估成本极度昂贵，利用性能强大的先进大模型（如 Gemini 1.5 Pro）作为裁判或标注师，来为模型生成的回答提供偏好打分、形成奖励矩阵，再拉动算法优化的全链路半自主迭代技术。",
+    douyinContext: "在抖音大促场景，每日生成海量自动化素材拼测，由另一套配备安全硬红线的‘AI 监理大模型’进行 7x24 批量判分拦截，实现成本仅有人工 RLHF 几十分之一的超速进化。"
   },
   {
     id: "skill",
@@ -56,7 +147,7 @@ export const GLOSSARY_DATA: GlossaryItem[] = [
   {
     id: "ai_alchemy",
     term: "AI 能力炼化",
-    definition: "将隐性业务经验（存在于脑中、聊天群、复盘文档中）提炼成 AI 能够理解并执行的结构化规则、评测集或 Prompt 的过程。",
+    definition: "将隐性业务经验（存在于脑中、聊天群、复盘文档中）提炼成 AI 能够理解并执行 of 结构化规则、评测集或 Prompt 的过程。",
     douyinContext: "把抖音老同学多年的大促运营经验，炼化为 AI 懂的策略，让新人一上来就能发布精妙策划。"
   },
   {
@@ -511,5 +602,87 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
       { label: "在关键且高风险漏网节点（如大促改价、对外发放优惠券、发版宣传）强制卡控“人眼终审-人工签字签发”的安全合规阀门", score: 5, description: "L2 水平。建立了极佳的红线安全治理思维（防风拦截防线），平衡了批量释放效率与绝对的内容合规安全" },
       { label: "建立模型对模型的对抗初审分级，针对高置信度产品低保场景自动放行，对边缘幻觉案例智能分流到人工签字后台并记录校本", score: 8, description: "L3 水平。终极闭环建设者。完成了组织级智能灰度释放、人机无缝混部与自动化自评定的完整资产系统" }
     ]
+  },
+  {
+    id: "q_future_improvement",
+    text: "你目前最渴望重点提升自己的哪项 AI 时代 DRI 协同核心能力？ (此题不计入基础得分，但将直接指派配套考核作业)",
+    category: "improvement",
+    options: [
+      { label: "📐 业务场景发掘力（把模糊的利益诉求拆解为高确定性、高置信度的 AI 任务与场景）", score: 0, description: "提升业务定义 and 商用杠杆，争取让 AI 直接作用于用户留存与核心业务指标" },
+      { label: "🛡️ 价值闭环与合规风控力（建立离线/在线评测集、配置双向安全卡点与人工确认防线）", score: 0, description: "保障内容完全合规与资金无损，探索大语言模型在大促/运营等高危场景的完全托管发布" },
+      { label: "💻 长流程编排与工具实操力（熟练使用画布软件、编排多路 Agent 协同并解决高随机报错）", score: 0, description: "攻克底层大模型幻觉与接口调用，使长跑自动化流程对齐金融级高可用等级" },
+      { label: "📢 团队开源与组织影响力（将个人的提效 Skill / 提示词包装为 SOP 与组件，赋能全组和新同学）", score: 0, description: "实现技能的组织级资本化，推广规范，争取成为整个大 BU 的 AI Champion" }
+    ]
   }
 ];
+
+export interface HomeworkTemplate {
+  id: string;
+  capabilityName: string;
+  title: string;
+  targetLevel: string;
+  scenario: string;
+  requirements: string[];
+  tips: string;
+  placeholder: string;
+}
+
+export const HOMEWORK_TEMPLATES: Record<number, HomeworkTemplate> = {
+  0: {
+    id: "hw_define",
+    capabilityName: "业务场景发掘力 (Business Definition)",
+    title: "【微作业 1】抖音本土高 frictional SOP 场景的 AIGC 价值杠杆提炼",
+    targetLevel: "L2 水平挑战 · 业务切题者",
+    scenario: "针对您所在的具体部门工作，找出 1 项当前消耗团队 3 人以上手工折腾、极具‘隐性资产’（如文风指导、评论抓取、规则核对）的高频场景，完成 AI 的价值闭环设计规划。",
+    requirements: [
+      "1. 明确写出此场景的当前痛点、人工耗费情况、以及大模型能切入的精确节点；",
+      "2. 提取出此场景中 AI 容易犯错或产生幻觉的 3 个关键约束，写出如何将它们固化为结构化提示词约束；",
+      "3. 设定 1 项你觉得可以直接对齐业务数据的度量指标（如召回率、人工初验合格率、耗时下降比等），评估其 AIGC 投资回报率。"
+    ],
+    tips: "💡 指南针导师秘诀：不要一上来就写复杂的代码宏图。最棒的业务型 DRI 善于划出问题的边界，只让 AI 做有高确定性返回的事情，并配备硬性的指标验证。",
+    placeholder: "我的设计提案：\n1. 痛点场景：我们部门日常在运营工作中经常需要人工去处理大促期间海量千人千面的文案检查...\n2. AI 规则限制：大模型最容易犯错的地方是语气与合规敏感度。我打算这样设定 System Instruction 的结构约束：把安全审查规范、负向过滤作为 mandatory few-shot 案例注入...\n3. ROI 度量：我们将以「AI 产出文案人工复用率」以及「首筛失误率」作为两维核心度量..."
+  },
+  1: {
+    id: "hw_safety",
+    capabilityName: "价值闭环与合规风控力 (Closed-Loop & Compliance)",
+    title: "【微作业 2】高危大促 AIGC 发送节点的‘人机双签’与多维评测集配置",
+    targetLevel: "L3 水平挑战 · 金融级风控制度家",
+    scenario: "假设您的系统要完成一项向用户自动分发大促代金券或自动化发版宣传的合规审查流程，必须保证不踩监管、资损红线，同时又想要兼顾高达 80% 的流程无人看管释放度。",
+    requirements: [
+      "1. 为该场景设计一个简单的‘人眼终审双签门卡 (Human-in-the-loop Gate)’逻辑架构；",
+      "2. 设计一份含 3 个经典 case 的评测大纲（包括：1个绝对合规、1个低俗挑衅、1个边缘套利幻觉），说明系统将如何判定等级并路由分流；",
+      "3. 描述如果大模型格式被截断或者发生异常，你的系统如何自动重试或优雅降级（Fallback Logic）。"
+    ],
+    tips: "💡 指南针导师秘诀：一个成熟的 DRI 必定是风控管理大师。对幻觉不妥协，将 100% 的不可确定性压缩回 1% 的可控安全轨，才是系统持久生存的本钱。",
+    placeholder: "我的设计提案：\n1. 人机双签机制：当 AI 对内容的置信度 > 0.95 时且没有触碰敏感词，则自动放行；在 [0.75, 0.95] 之间时，强制推送到飞书服务卡片触发人工点击审核；小于 0.75 时一票否决。\n2. 评测大纲设计：Case1 [合法运营文案 => 预估高置信放行]，Case2 [包含‘限时秒杀，先到先得必得百元’虚假广告嫌疑 => 安全模型打分拦截]，Case3 [非结构化输入导致 JSON 损坏 => 异常处理启动]...\n3. 容灾兜底防风降级：一旦发生模型崩坏或格式错乱，直接切换为默认的兜底模版，保证外发绝对合规..."
+  },
+  2: {
+    id: "hw_execute",
+    capabilityName: "长流程编排与工具实操力 (Long Pipeline Orchestration)",
+    title: "【微作业 3】4 节点 Multi-Agent AIGC 协同画布流拓扑设计",
+    targetLevel: "L2-L3 水平挑战 · 全链路编排极客",
+    scenario: "设计一个 4 节点自动化多步流水线工作流。节点 1：输入数据捕获；节点 2：模型分流研判；节点 3：自动化合规与格式校核；节点 4：结构化 JSON 输出与外部挂载发布。",
+    requirements: [
+      "1. 用文字或脑图写出 4 个节点的上下游输入输出参数（Input/Output Schema），说明如何流转 Token 数据；",
+      "2. 面对大语言模型的‘JSON 截断坏死’问题，写出你设计的 XML 标签捕获与 RegEx 正则清洗正则表达式或 prompt 控制手段；",
+      "3. 阐述你是如何利用 RAG 知识库挂载，使得这个 Agents 在运行流程中，针对专业知识回答正确率能在 90% 以上。"
+    ],
+    tips: "💡 指南针导师秘诀：动手写是消灭焦虑的唯一策略。通过将 API 接口强规范化、设定 Strict JSON 返回，你能搭建一套不怕高随机干扰的高水准机器人团队！",
+    placeholder: "我的设计提案：\n1. 4节点拓扑关系及参数：\n   - Node1: Webhook 触发展开 [Activity_ID, User_ID]\n   - Node2: Gemini Router [Activity_ID] => 进行任务路由(文本创意 vs 图像生成)\n   - Node3: Content Safety Examiner [Raw_Content] => 返回 [Is_Safe, Score]\n   - Node4: Lark Multi-Table Publisher => 结构化写入发布\n2. 结构化捕获与清洗：我将在 System Instruction 强制要求输出 ```xml <results>...</results> ``` 语法块，若由于 JSON 截断失败，采用正则 r'<results>(.*?)</results>' 预提取再用 JSON 拦截解析...\n3. 知识库加载：绑定大促 SOP 多维表格，经过 BGE 向量化分片，采取 Hybrid RAG 检索..."
+  },
+  3: {
+    id: "hw_influence",
+    capabilityName: "团队开源与组织影响力 (Open Source & Team Impact)",
+    title: "【微作业 4】部门高耗时 SOP 智能化资产重构与开源普及计划书",
+    targetLevel: "L2 水平挑战 · 组织级 AI Champion",
+    scenario: "你已经在个人日常工序中完成了 1 项极佳 of AI 工作流提效（效率提高 5 倍且平稳运行 1 个月）。现在，你打算将此资产在全组乃至跨部门进行共享开源，争取拿到更多组织资源扶持并对齐你的季度 OKR。",
+    requirements: [
+      "1. 拟定一份简短、富有穿透力的‘5分钟周会 Demo’演示大纲，说明如何打动平时对 AIGC 持怀疑观望态度的高管与老兵同学；",
+      "2. 包装该 AI 资产为‘一键直达 (One-Click SOP Template)’。说明如何在飞书文档、平台多维表中设计极简、低理解摩擦的新人教程；",
+      "3. 在下一季度 OKR 的 O（Objective）中，写下 2 条可度量、高穿透力的 Kr（Key Results）来印证你在本部门的协作影响力。"
+    ],
+    tips: "💡 指南针导师秘诀：超级个体的终极跃迁，在于把个人的单点爽感提纯为团队的共有资产。降低新人的尝鲜阻力和摩擦是引流的关键。",
+    placeholder: "我的设计提案：\n1. 5分钟周会大纲：由痛点数据引入 [活动文案每次产出消耗运营 2 小时]，接着实际投屏展示 [从填写需求到 5 秒产出 10 条高合规文案]，最后开源该飞书多维表链接，供当场扫码复用...\n2. SOP 极简设计：在多维表上方开设【AI 提效指引卡片】，仅露一个核心“运行”按钮，其他背景 API 密钥由中台统一配置托管...\n3. OKR 设计：\n   - O: 打造部门级 AI 自建中台，实现业务工序自动化托管\n   - KR1: 开源 AI 提效套具被大组内 80% 同学接入使用，产出 5 个高保真标杆案例\n   - KR2: 单季平均流程人效提高 50% 以上，在部门周报中做 1 次全员推广展示"
+  }
+};
+

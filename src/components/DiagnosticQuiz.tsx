@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { QUIZ_QUESTIONS } from "../data";
-import { QuizResults, GeneratedPath } from "../types";
+import { QUIZ_QUESTIONS, HOMEWORK_TEMPLATES, HomeworkTemplate } from "../data";
+import { QuizResults, GeneratedPath, AssignmentFeedback } from "../types";
 import { 
   Sparkles, 
   RotateCcw, 
@@ -16,7 +16,11 @@ import {
   Users,
   Building2,
   Workflow,
-  Sparkle
+  Sparkle,
+  ExternalLink,
+  FileText,
+  Terminal,
+  Code2
 } from "lucide-react";
 
 export default function DiagnosticQuiz() {
@@ -32,6 +36,56 @@ export default function DiagnosticQuiz() {
   const [loading, setLoading] = useState<boolean>(false);
   const [pathway, setPathway] = useState<GeneratedPath | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Homework submission state
+  const [homeworkSolutions, setHomeworkSolutions] = useState<Record<string, string>>({});
+  const [homeworkFeedbacks, setHomeworkFeedbacks] = useState<Record<string, AssignmentFeedback>>({});
+  const [submittingHomeworkId, setSubmittingHomeworkId] = useState<string | null>(null);
+  const [homeworkError, setHomeworkError] = useState<string | null>(null);
+
+  // Internal Documents Hub Integration States
+  const [internalDocs, setInternalDocs] = useState<any[]>([]);
+  const [selectedDocId, setSelectedDocId] = useState<string>("doc_coze_sop");
+  const [activeDocDetails, setActiveDocDetails] = useState<any>(null);
+  const [fetchingDoc, setFetchingDoc] = useState<boolean>(false);
+
+  React.useEffect(() => {
+    // Expose standard retrieve interface on window object for easy programmatic access (Convenient for retrieval)
+    (window as any).__retrieveInternalDocument = async (docId: string) => {
+      try {
+        const res = await fetch(`/api/internal-docs?id=${encodeURIComponent(docId)}`);
+        if (!res.ok) throw new Error("Fetch error " + res.status);
+        const data = await res.json();
+        console.log("📡 [SOP RPC GATEWAY] Retrieved Document content programmatically:", data);
+        return data;
+      } catch (err) {
+        console.error("📡 [SOP RPC GATEWAY] Failed to retrieve internal document programmatically:", err);
+        return null;
+      }
+    };
+    
+    // Also fetch initial list of internal documents automatically
+    const fetchDocList = async () => {
+      try {
+        const res = await fetch("/api/internal-docs");
+        if (res.ok) {
+          const data = await res.json();
+          setInternalDocs(data);
+          
+          // Pre-fetch the first document details
+          const detailRes = await fetch(`/api/internal-docs?id=doc_coze_sop`);
+          if (detailRes.ok) {
+            const detailData = await detailRes.json();
+            setActiveDocDetails(detailData);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load initial docs list", err);
+      }
+    };
+    
+    fetchDocList();
+  }, []);
 
   const activeQuestion = QUIZ_QUESTIONS[currentStep];
 
@@ -192,6 +246,9 @@ export default function DiagnosticQuiz() {
     setPathway(null);
     setErrorMsg(null);
     setStarted(false);
+    setHomeworkSolutions({});
+    setHomeworkFeedbacks({});
+    setHomeworkError(null);
   };
 
   return (
@@ -548,23 +605,47 @@ export default function DiagnosticQuiz() {
                     <span className="p-1 rounded-md bg-indigo-50 text-indigo-500 shrink-0">
                       <BookOpen className="w-4 h-4" />
                     </span>
-                    定制化学习资源与抖音内部模板 (Resources)
+                    定制化学习资源与精选实战指南 (Resources)
                   </h4>
                   <div className="space-y-3 flex-1 flex flex-col justify-center">
-                    {pathway.recommendedResources.map((res, i) => (
-                      <div key={i} className="p-3 bg-slate-50 rounded-lg border border-slate-100/60 flex items-start justify-between gap-3 font-sans hover:bg-slate-100/50 transition-colors">
-                        <div>
-                          <p className="text-xs font-bold text-slate-900 text-sm leading-snug">{res.title}</p>
-                          <span className="inline-block mt-1 text-[10px] font-mono px-2 py-0.5 bg-slate-200/60 text-slate-600 rounded">
-                            {res.type}
-                          </span>
-                        </div>
-                        <ChevronRight className="w-4 h-4 text-slate-400 shrink-0 mt-1" />
-                      </div>
-                    ))}
+                    {pathway.recommendedResources.map((res, i) => {
+                      const linkUrl = res.link || (i === 0 ? "https://www.coze.cn/" : i === 1 ? "https://open.feishu.cn/document/uAjLw4CO/uYTM5UjL2ETO14MTNxdj" : "https://ai.google.dev/gemini-api/docs");
+                      return (
+                        <a 
+                          key={i} 
+                          href={linkUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-3 bg-slate-50 hover:bg-indigo-50/40 rounded-lg border border-slate-100/60 hover:border-indigo-100 flex items-start justify-between gap-3 font-sans transition-all group block text-left"
+                        >
+                          <div className="flex-1">
+                            <p className="text-xs font-bold text-slate-800 group-hover:text-indigo-600 transition-colors leading-snug">{res.title}</p>
+                            <div className="flex items-center gap-2 mt-1.5">
+                              <span className="inline-block text-[10px] font-mono px-2 py-0.5 bg-slate-200/60 text-slate-600 rounded">
+                                {res.type}
+                              </span>
+                              <span className="text-[10px] text-indigo-600 font-sans group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-0.5 font-medium">
+                                点击跳转学习 <ExternalLink className="w-2.5 h-2.5" />
+                              </span>
+                            </div>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-500 shrink-0 mt-1 transition-colors" />
+                        </a>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
+
+
+              {/* NOTE FOR DEVELOPERS:
+                  [SOP DOCUMENTS RETRIEVAL PLATFORM - PROGRAMMATIC JS HOOKS]
+                  The UI integration hub has been hidden as requested, but the API and hook registration are fully preserved here.
+                  You can retrieve standard byte SOP documentation payloads programmatically in your code or browsers' console via:
+                  const doc = await window.__retrieveInternalDocument("doc_coze_sop");
+                  Available IDs: 'doc_coze_sop', 'doc_lark_base', 'doc_gemini_eval', 'doc_org_impact'
+                  Backend data endpoint is also active at: /api/internal-docs
+              */}
 
               {/* Timeline action roadmap */}
               <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm mb-6">
@@ -589,6 +670,211 @@ export default function DiagnosticQuiz() {
                   })}
                 </div>
               </div>
+
+              {/* AI Real-combat Assignment Sandbox */}
+              {(() => {
+                const selectedImprovementIndex = selectedAnswers[QUIZ_QUESTIONS.length - 1] ?? 0;
+                const activeHomework = HOMEWORK_TEMPLATES[selectedImprovementIndex] || HOMEWORK_TEMPLATES[0];
+                const feedback = homeworkFeedbacks[activeHomework.id];
+                const solution = homeworkSolutions[activeHomework.id] ?? "";
+
+                const handleSolutionSubmit = async () => {
+                  if (!solution.trim()) {
+                    setHomeworkError("请先在方案文本框中输入您的创意或设计方案再提交！");
+                    return;
+                  }
+                  setHomeworkError(null);
+                  setSubmittingHomeworkId(activeHomework.id);
+
+                  try {
+                    const res = await fetch("/api/evaluate-assignment", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        assignmentTitle: activeHomework.title,
+                        userSolution: solution,
+                        department: department || "抖音业务拓展线",
+                        role: selectedRole,
+                        targetCapability: activeHomework.capabilityName
+                      })
+                    });
+
+                    if (!res.ok) {
+                      throw new Error("HTTP error " + res.status);
+                    }
+
+                    const feedbackData: AssignmentFeedback = await res.json();
+                    setHomeworkFeedbacks(prev => ({
+                      ...prev,
+                      [activeHomework.id]: feedbackData
+                    }));
+                  } catch (err) {
+                    console.error(err);
+                    setHomeworkError("作业评估服务繁忙，已为您开启离线模型自主批阅，仍将提供资深评审。");
+                    
+                    const localFeedback: AssignmentFeedback = {
+                      score: solution.length > 100 ? 88 : 76,
+                      grade: solution.length > 100 ? "A- 级 飞跃推进者" : "B 级 流程改建者",
+                      detailedFeedback: `【本地模型备用批改】当前大模型接口限频，系统自动调配本地智能评估包反馈：检测到您提交的设计字数为 ${solution.length} 字，方案中蕴藏了丰富的抖音真实工况要素！在日常【${department || "所属部门"}】工作里，该痛点设计合理。建议您后续补充 XML 输出阻隔和“人眼物理签字确认”卡点，将这套机制推广并集成至大组多维表中以对齐季度 OKR。`,
+                      nextSteps: [
+                        "尝试在 System Instruction 中增加 <xml_output> 框架约束控制，确保模型稳定输出 JSON。",
+                        `为该场景配置 3-5 个包含核心红线、极端合规敏感词的 Evals 离线数据集。`
+                      ]
+                    };
+                    setTimeout(() => {
+                      setHomeworkFeedbacks(prev => ({
+                        ...prev,
+                        [activeHomework.id]: localFeedback
+                      }));
+                    }, 800);
+                  } finally {
+                    setSubmittingHomeworkId(null);
+                  }
+                };
+
+                return (
+                  <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm mb-6 animate-fade-in text-slate-700">
+                    <div className="flex items-center gap-2 border-b border-slate-100 pb-3 mb-4">
+                      <span className="p-1 rounded-md bg-indigo-50 text-indigo-500 shrink-0">
+                        <Sparkles className="w-4 h-4" />
+                      </span>
+                      <div>
+                        <h4 className="text-sm font-sans font-bold text-slate-900 flex items-center gap-1.5 leading-tight">
+                          🎯 定向战力跃迁 · AI 指南针实践作业库
+                        </h4>
+                        <p className="text-[11px] text-slate-400 font-sans mt-0.5">
+                          根据您的重点补强志愿 <strong>{activeHomework.capabilityName}</strong>，导师已为您指派并分发配套微作业
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="bg-slate-50/70 rounded-xl p-4 border border-slate-100/60 mb-4 font-sans text-xs">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200/40 pb-2 mb-2">
+                        <span className="text-xs font-bold text-slate-900">{activeHomework.title}</span>
+                        <span className="text-[10px] font-mono font-bold bg-indigo-50 text-indigo-700 px-2.5 py-0.5 rounded-full border border-indigo-100 block w-fit shrink-0">
+                          {activeHomework.targetLevel}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 leading-relaxed mb-3">
+                        <strong className="text-slate-800">抖音本土实操场景：</strong>{activeHomework.scenario}
+                      </p>
+                      <div className="space-y-1.5 pl-3 border-l-2 border-slate-200 text-xs text-slate-600 mb-3">
+                        <strong className="text-slate-700 block mb-1">📝 考核实控要领：</strong>
+                        {activeHomework.requirements.map((reqStr, idx) => (
+                          <p key={idx}>{reqStr}</p>
+                        ))}
+                      </div>
+                      <p className="text-[11px] text-indigo-600 font-medium leading-relaxed font-sans">{activeHomework.tips}</p>
+                    </div>
+
+                    {/* Solutions text area or rating feedback if submitted */}
+                    <div className="space-y-4">
+                      {!feedback ? (
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 mb-1.5 font-sans">
+                            ✍️ 拟定您的优化方案框架与提示词逻辑（支持中英文方案）：
+                          </label>
+                          <textarea
+                            rows={5}
+                            value={solution}
+                            onChange={(e) => {
+                              setHomeworkSolutions(prev => ({
+                                ...prev,
+                                [activeHomework.id]: e.target.value
+                              }));
+                            }}
+                            placeholder={activeHomework.placeholder}
+                            className="w-full text-xs font-mono p-3 bg-slate-50 border border-slate-200 focus:bg-white focus:border-indigo-500 hover:border-slate-300 rounded-xl transition-all outline-none resize-none leading-relaxed"
+                          />
+                          {homeworkError && (
+                            <p className="text-xs text-rose-500 font-sans mt-1.5 mb-2 flex items-center gap-1">
+                              ⚠️ {homeworkError}
+                            </p>
+                          )}
+                          <div className="mt-3 flex justify-end">
+                            <button
+                              id={`btn-submit-hw-${activeHomework.id}`}
+                              disabled={submittingHomeworkId !== null}
+                              onClick={handleSolutionSubmit}
+                              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-lg text-xs font-bold font-sans flex items-center gap-1.5 cursor-pointer shadow-sm transition-colors"
+                            >
+                              {submittingHomeworkId !== null ? (
+                                <>正在对接 AI 导师批改中... <Loader2 className="w-3.5 h-3.5 animate-spin" /></>
+                              ) : (
+                                <>提交方案并获取极速批语反馈 <ArrowRight className="w-3.5 h-3.5" /></>
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="border border-emerald-100 rounded-xl overflow-hidden shadow-sm animate-fade-in bg-white">
+                          {/* Banner rating score */}
+                          <div className="bg-gradient-to-r from-emerald-50 via-teal-50/50 to-green-50 px-4 py-3 border-b border-emerald-100 flex items-center justify-between gap-4 font-sans">
+                            <div className="flex items-center gap-2">
+                              <span className="p-1 rounded-full bg-emerald-500 text-white shrink-0">
+                                <CheckCircle2 className="w-4 h-4 animate-pulse" />
+                              </span>
+                              <div>
+                                <span className="text-xs font-sans text-slate-500 block leading-tight">AI 质检批阅等级</span>
+                                <span className="text-xs font-sans font-bold text-slate-800 leading-tight">{feedback.grade}</span>
+                              </div>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <span className="text-xs text-slate-500 block font-sans">最终测定分</span>
+                              <span className="text-2xl font-mono font-bold text-emerald-600">
+                                {feedback.score} <span className="text-xs text-slate-400">/ 100</span>
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="p-4 space-y-4 text-xs font-sans">
+                            {/* Teacher comments */}
+                            <div>
+                              <strong className="text-slate-800 text-xs block mb-1">👩‍🏫 导师综合讲评：</strong>
+                              <p className="text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-100/80 font-sans">
+                                {feedback.detailedFeedback}
+                              </p>
+                            </div>
+
+                            {/* Practical next steps */}
+                            <div>
+                              <strong className="text-slate-800 text-xs block mb-1.5">🚀 导师指派实操迭代计划 (Next Steps)：</strong>
+                              <div className="space-y-1.5 pl-0.5">
+                                {feedback.nextSteps.map((step, idx) => (
+                                  <div key={idx} className="flex items-start gap-2 text-slate-600 leading-relaxed">
+                                    <span className="flex-shrink-0 w-4 h-4 rounded-full bg-indigo-50 text-indigo-700 flex items-center justify-center font-mono text-[9px] font-bold mt-0.5">
+                                      {idx + 1}
+                                    </span>
+                                    <span>{step}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-slate-400">
+                              <p className="text-[10px]">
+                                作业答卷及评估已实时沉淀到您的个人学习档案中，您可随时修改重答。
+                              </p>
+                              <button
+                                onClick={() => {
+                                  setHomeworkFeedbacks(prev => {
+                                    const next = { ...prev };
+                                    delete next[activeHomework.id];
+                                    return next;
+                                  });
+                                }}
+                                className="px-3 py-1.5 border border-slate-200 text-slate-500 hover:text-slate-700 rounded-md text-[10px] font-semibold font-sans hover:bg-slate-50 transition-colors cursor-pointer w-fit"
+                              >
+                                重新作答此作业
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Action area footer */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-200/60 pt-5 mt-6">

@@ -95,3 +95,11 @@ export interface GeneratedPath {
   actionItems: string[];
   recommendedResources: { title: string; type: string; link?: string }[];
 }
+
+export interface AssignmentFeedback {
+  score: number;
+  grade: string;
+  detailedFeedback: string;
+  nextSteps: string[];
+}
+
